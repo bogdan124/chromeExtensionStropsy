@@ -213,31 +213,71 @@ $(document).ready(function() {
         }
     });
 
-    $("#textShareTwitterBtn_analyse").on("click", function(e) {
-        console.log(textuBIG);
-    });
+
+
+    var save_span_ID = "";
+
+    function putbetweenTags() {
+        var selection = document.getSelection();
+        var selection_text = selection.toString();
+
+        var span = document.createElement('SPAN');
+        span.textContent = selection_text;
+        span.id = "id_1" + makeid(6);
+        save_span_ID = span.id;
+        var range = selection.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(span);
+    }
+
+    function highlight(text) {
+        var inputText = document.getSelection().toString();
+        var innerHTML2 = inputText;
+        //var i = 0;
+        for (var i = 0; i < text.data.length; i++) {
+            var index = innerHTML2.indexOf(text.data[i]);
+            // console.log(text.data[i]);
+            if (index >= 0) {
+
+                innerHTML2 = innerHTML2.substring(0, index) + "<stropsy data-markjs='true' class='stropsy-element-14111'>" +
+                    innerHTML2.substring(index, index + text.data[i].length) +
+                    "</stropsy>" + innerHTML2.substring(index + text.data[i].length, innerHTML2.length);
+                //   console.log(innerHTML2);
+                document.getElementById(save_span_ID).innerHTML = innerHTML2;
+            }
+        }
+    }
+
+
+
+
     document.getElementsByTagName("BODY")[0].addEventListener("mouseup", function(e) {
+        var getPopup = document.getElementById("textSelectionTooltipContainer");
         let textu = document.getSelection().toString();
         let matchu = /\r|\n/.exec(textu);
-        if (textu.length && !matchu) {
-            let range = document.getSelection().getRangeAt(0);
-            rect = range.getBoundingClientRect();
-            scrollPosition = $(window).scrollTop();
-            containerTop = scrollPosition + rect.top - 50 + "px";
-            containerLeft = rect.left + rect.width / 2 - 50 + "px";
-            textSelectionTooltipContainer.style.transform =
-                "translate3d(" + containerLeft + "," + containerTop + "," + "0px)";
-            bodyElement.appendChild(textSelectionTooltipContainer);
-
-            textuBIG = textu;
-
-            chrome.runtime.sendMessage({ "type": 3, "data": textuBIG }, function(response) {
-
-                console.log(response, textuBIG);
-
+        if (getPopup == null) {
+            if (textu.length && !matchu) {
+                let range = document.getSelection().getRangeAt(0);
+                rect = range.getBoundingClientRect();
+                scrollPosition = $(window).scrollTop();
+                containerTop = scrollPosition + rect.top - 50 + "px";
+                containerLeft = rect.left + rect.width / 2 - 50 + "px";
+                textSelectionTooltipContainer.style.transform =
+                    "translate3d(" + containerLeft + "," + containerTop + "," + "0px)";
+                bodyElement.appendChild(textSelectionTooltipContainer);
+                textuBIG = textu;
+            }
+        } else {
+            $("#textShareTwitterBtn_analyse").on("click", function(e) {
+                console.log(textuBIG);
+                chrome.runtime.sendMessage({ "type": 3, "data": textuBIG }, function(response) {
+                    console.log(response, textuBIG);
+                    putbetweenTags();
+                    highlight(response);
+                });
             });
         }
-
     });
+
 
 });
