@@ -66,9 +66,9 @@
     }
     
     input:checked+.slider:before {
-        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(26px);
+        -webkit-transform: translateX(35px);
+        -ms-transform: translateX(35px);
+        transform: translateX(35px);
     }
     /* Rounded sliders */
     
@@ -122,6 +122,11 @@
         height: 40%;
         border-bottom: 1px solid #d2caca;
     }
+    
+    .GoToStropsy {
+        float: right;
+        padding: 15px;
+    }
 </style>
 <meta http-equiv="Content-Security-Policy" content="
 base-uri;
@@ -150,7 +155,7 @@ style-src-elem * data: 'unsafe-inline';
         <div class="wordDetection">
             <span class="enable_detection">Enable special terms detection</span>
             <label class="switch">
-      <input id="wordDetectCheckbox" type="checkbox">
+      <input id="wordDetectCheckbox_enable_page_selection" type="checkbox">
       <span class="slider round"> </span>
     </label>
         </div>
@@ -158,14 +163,16 @@ style-src-elem * data: 'unsafe-inline';
         <div class="wordDetection">
             <span class="enable_detection">Enable only highlite detection</span>
             <label class="switch">
-        <input id="wordDetectCheckbox" type="checkbox">
+        <input id="wordDetectCheckbox_enable_selection" type="checkbox">
         <span class="slider round"> </span>
       </label>
         </div>
 
     </div>
     <div class="footer">
-
+        <a href="stropsy.com">
+            <div class="GoToStropsy">My Stropsy</div>
+        </a>
     </div>
 </div>
 

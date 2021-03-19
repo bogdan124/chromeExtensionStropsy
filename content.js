@@ -135,7 +135,7 @@ $(document).on("click", function(event) {
 
 
             chrome.runtime.sendMessage({ "type": 2, "data": event.target.outerText + " site:wikipedia.org" }, function(response) {
-                console.log(response, response.data.items[0].pagemap.cse_image[0].src);
+                console.log(response, response.data);
 
                 $("#stropsy-d2ex2a1223").html(response.data.items[0].snippet + `<a href='" + response.data.items[0].link + "'>read more</a><br/>
                 <ul class="tiles_pages all-stropsy-content-from-popup" style="list-style-type:none;list-style-image:none;display: inline-flex;">
