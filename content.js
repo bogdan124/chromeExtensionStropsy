@@ -54,7 +54,10 @@ https://en.wikipedia.org/wiki/Emperor_of_China -660
 
 let getParagraphs = document.getElementsByTagName("p");
 var getBody = [];
-
+var getIdClass;
+var dataPageNum1;
+var saveTitle;
+var dataPageTab = [];
 
 for (var i = 0; i < 4; i++) {
     getBody.push(getParagraphs[i].innerHTML);
@@ -105,6 +108,17 @@ chrome.runtime.sendMessage({ "type": 1, "data": getBody, "all_body": bodyText },
 });
 
 
+
+function makeid(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 var btn = document.createElement("stropsy-popup");
 btn.innerHTML = ` <div class="content-stropsy all-stropsy-content-from-popup">
   <div class="title_stropsy all-stropsy-content-from-popup" id="stropsy-3edwwx" style="font-family: sans-serif !important;font-size: 26px !important;"></div>
@@ -124,36 +138,39 @@ $(document).on("click", function(event) {
     //var getData=$(event.target.dataset.idGet).html();
     console.log(event);
 
+
     if (event.target.nodeName == "STROPSY" || event.target.nodeName == "STROPSY-POPUP") {
         if (event.target.nodeName == "STROPSY") {
             $("stropsy-popup").remove();
+            dataPageTab = [];
             event.target.innerHTML = event.target.innerHTML + "<stropsy-popup>" + btn.innerHTML + "</stropsy-popup>";
 
             btn.style.display = "inline";
+            saveTitle = event.target.innerText;
+            console.log(saveTitle);
             $(".title_stropsy").html("<div class='image_read-stropsy all-stropsy-content-from-popup'></div>" + event.target.innerText);
 
 
 
             chrome.runtime.sendMessage({ "type": 2, "data": event.target.outerText + " site:wikipedia.org" }, function(response) {
                 console.log(response, response.data);
-
+                getIdClass = makeid(6);
                 $("#stropsy-d2ex2a1223").html(response.data.items[0].snippet + `<a href='" + response.data.items[0].link + "'>read more</a><br/>
                 <ul class="tiles_pages all-stropsy-content-from-popup" style="list-style-type:none;list-style-image:none;display: inline-flex;">
-                <li class="list-tiles all-stropsy-content-from-popup" style="margin-right: 12px;" onclick="accesTab(1)">Pages</li>
-                <li class="list-tiles  all-stropsy-content-from-popup" style="margin-right: 12px;" onclick="accesTab(2)">Images</li>
-                <li class="list-tiles  all-stropsy-content-from-popup" style="margin-right: 12px;" onclick="accesTab(3)">Videos</li>
-                <li class="list-tiles  all-stropsy-content-from-popup" style="margin-right: 12px;" onclick="accesTab(4)">News</li>
-                <li class="list-tiles all-stropsy-content-from-popup" style="margin-right: 12px;" onclick="accesTab(5)">Tweetes</li>
+                    <li class="list-tiles all-stropsy-content-from-popup"  id="stropsy-Pages-` + getIdClass + `" style="margin-right: 12px;" >Wiki</li>
+                  
+                    <li class="list-tiles  all-stropsy-content-from-popup" id="stropsy-Videos-` + getIdClass + `" style="margin-right: 12px;">Videos</li>
+                    <li class="list-tiles  all-stropsy-content-from-popup" id="stropsy-News-` + getIdClass + `"  style="margin-right: 12px;">News</li>
+                    <li class="list-tiles all-stropsy-content-from-popup"  id="stropsy-Research-` + getIdClass + `"   style="margin-right: 12px;">Research</li>
                 </ul>
-                <div class="content-display-data  all-stropsy-content-from-popup"> <ul class='add-data-to-href  all-stropsy-content-from-popup'></ul></div>
-               
-         `);
+                <div class="content-display-data  all-stropsy-content-from-popup"> <ul class='add-data-to-href  all-stropsy-content-from-popup'></ul></div>   
+                 `); //  <li class="list-tiles  all-stropsy-content-from-popup" id="stropsy-Images-` + getIdClass + `"  style="margin-right: 12px;" >Images</li>
+                dataPageNum1 = response.data.items;
                 for (var i = 1; i < response.data.items.length; i++) {
                     $(".add-data-to-href").append("<li class='link-popup' style='margin-bottom:0px!important;'><a href='" + response.data.items[i].link + "'>" + response.data.items[i].htmlTitle + "</a></li>");
                 }
                 $(".image_read-stropsy").html("<img src='" + response.data.items[0].pagemap.cse_image[0].src + "' width='100%' height='200px'/>");
             });
-
         }
     } else {
         if (event.target.nodeName != "STROPSY-POPUP") {
@@ -162,9 +179,105 @@ $(document).on("click", function(event) {
             }
         }
     }
-})
 
 
+
+
+    /* wiki */
+    if (event.target.id == "stropsy-Pages-" + getIdClass) {
+        $("ul.add-data-to-href.all-stropsy-content-from-popup").html("");
+        if (dataPageTab[0] == undefined) {
+            chrome.runtime.sendMessage({ "type": 2, "data": saveTitle + " site:wikipedia.com" }, function(response) {
+                console.log(response, response.data);
+
+                dataPageTab[0] = [];
+                dataPageTab[0] = response.data.items;
+
+                for (var i = 1; i < response.data.items.length; i++) {
+                    $(".add-data-to-href").append("<li class='link-popup' style='margin-bottom:0px!important;'><a href='" + response.data.items[i].link + "'>" + response.data.items[i].htmlTitle + "</a></li>");
+                }
+            });
+        } else {
+            for (var i = 1; i < dataPageTab[0].length; i++) {
+                $(".add-data-to-href").append("<li class='link-popup' style='margin-bottom:0px!important;'><a href='" + dataPageTab[0][i].link + "'>" + dataPageTab[0][i].htmlTitle + "</a></li>");
+            }
+
+        }
+        console.log(dataPageTab, dataPageTab[0] == undefined);
+    } else if (event.target.id == "stropsy-Images-" + getIdClass) {
+        $("ul.add-data-to-href.all-stropsy-content-from-popup").html("");
+
+        /* videos */
+    } else if (event.target.id == "stropsy-Videos-" + getIdClass) {
+        $("ul.add-data-to-href.all-stropsy-content-from-popup").html("");
+        if (dataPageTab[1] == undefined) {
+            chrome.runtime.sendMessage({ "type": 2, "data": saveTitle + " site:youtube.com" }, function(response) {
+                console.log(response, response.data);
+
+                dataPageTab[1] = [];
+                dataPageTab[1] = response.data.items;
+
+                for (var i = 1; i < response.data.items.length; i++) {
+                    $(".add-data-to-href").append("<li class='link-popup' style='margin-bottom:0px!important;'><a href='" + response.data.items[i].link + "'>" + response.data.items[i].htmlTitle + "</a></li>");
+                }
+            });
+        } else {
+            for (var i = 1; i < dataPageTab[1].length; i++) {
+                $(".add-data-to-href").append("<li class='link-popup' style='margin-bottom:0px!important;'><a href='" + dataPageTab[1][i].link + "'>" + dataPageTab[1][i].htmlTitle + "</a></li>");
+            }
+
+        }
+        console.log(dataPageTab, dataPageTab[1] == undefined);
+        /* news */
+    } else if (event.target.id == "stropsy-News-" + getIdClass) {
+        $("ul.add-data-to-href.all-stropsy-content-from-popup").html("");
+        if (dataPageTab[2] == undefined) {
+            chrome.runtime.sendMessage({ "type": 2, "data": saveTitle + " site:news.google.com" }, function(response) {
+                console.log(response, response.data);
+                dataPageTab[2] = [];
+                dataPageTab[2] = response.data.items;
+
+                for (var i = 1; i < response.data.items.length; i++) {
+                    $(".add-data-to-href").append("<li class='link-popup' style='margin-bottom:0px!important;'><a href='" + response.data.items[i].link + "'>" + response.data.items[i].htmlTitle + "</a></li>");
+                }
+            });
+        } else {
+            for (var i = 1; i < dataPageTab[2].length; i++) {
+                $(".add-data-to-href").append("<li class='link-popup' style='margin-bottom:0px!important;'><a href='" + dataPageTab[2][i].link + "'>" + dataPageTab[2][i].htmlTitle + "</a></li>");
+            }
+
+        }
+        console.log(dataPageTab, dataPageTab[2] == undefined);
+        /* research */
+    } else if (event.target.id == "stropsy-Research-" + getIdClass) {
+        $("ul.add-data-to-href.all-stropsy-content-from-popup").html("");
+        if (dataPageTab[3] == undefined) {
+            chrome.runtime.sendMessage({ "type": 2, "data": saveTitle + " site:sciencedirect.com" }, function(response) {
+                console.log(response, response.data);
+                $("ul.add-data-to-href.all-stropsy-content-from-popup").html("");
+                dataPageTab[3] = [];
+                dataPageTab[3] = response.data.items;
+
+                for (var i = 1; i < response.data.items.length; i++) {
+                    $(".add-data-to-href").append("<li class='link-popup' style='margin-bottom:0px!important;'><a href='" + response.data.items[i].link + "'>" + response.data.items[i].htmlTitle + "</a></li>");
+                }
+            });
+        } else {
+            for (var i = 1; i < dataPageTab[3].length; i++) {
+                $(".add-data-to-href").append("<li class='link-popup' style='margin-bottom:0px!important;'><a href='" + dataPageTab[3][i].link + "'>" + dataPageTab[3][i].htmlTitle + "</a></li>");
+            }
+
+        }
+        console.log(dataPageTab, dataPageTab[3] == undefined);
+    }
+
+
+
+});
+
+
+
+/*here we have the select part of the page - select popoup*/
 function snapSelectionToWord() {
     var sel;
 
@@ -172,15 +285,7 @@ function snapSelectionToWord() {
     return text;
 }
 
-function makeid(length) {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-}
+
 
 
 //salvez textul venit de la highltat cuvinte
@@ -255,8 +360,11 @@ $(document).ready(function() {
         var getPopup = document.getElementById("textSelectionTooltipContainer");
         let textu = document.getSelection().toString();
         let matchu = /\r|\n/.exec(textu);
+        console.log(1);
         if (getPopup == null) {
-            if (textu.length && !matchu) {
+            console.log(2, textu.length, matchu);
+            if (textu.length) { //&& !matchu
+                console.log(3);
                 let range = document.getSelection().getRangeAt(0);
                 rect = range.getBoundingClientRect();
                 scrollPosition = $(window).scrollTop();

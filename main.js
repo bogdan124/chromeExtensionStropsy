@@ -76,7 +76,7 @@ function extractKeySmallText(textToExtract) {
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.type == 1) {
-            textToEvaluate(request.data, request.all_body);
+            //  textToEvaluate(request.data, request.all_body);
             sendResponse({ farewell: "goodbye", data: sendBack });
         } else if (request.type == 2) {
             console.log(request.data);
@@ -101,7 +101,7 @@ $("#wordDetectCheckbox").on('change', function() {
         chrome.runtime.onMessage.addListener(
             function(request, sender, sendResponse) {
                 if (request.type == 1) {
-                    textToEvaluate(request.data, request.all_body);
+                    // textToEvaluate(request.data, request.all_body);
                     sendResponse({ farewell: "goodbye", data: sendBack });
                 } else if (request.type == 2) {
 
@@ -110,4 +110,11 @@ $("#wordDetectCheckbox").on('change', function() {
                 }
             });
     }
+});
+/*button go to a login page*/
+$(document).ready(function() {
+    $('.GoToStropsy').on('click', 'a', function() {
+        chrome.tabs.create({ url: "https://stropsy.com/login" });
+        return false;
+    });
 });
