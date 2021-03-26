@@ -5,17 +5,17 @@
     "description": "Build an Extension!",
     "permissions": ["activeTab", "declarativeContent", "tabs", "storage", "clipboardWrite", "http://*/*", "https://*/*", "file://*/*"],
     "background": {
-        "scripts": ["jquery.js", "background.js", "main.js"],
+        "scripts": ["js/jquery.js", "js/background.js", "js/main.js"],
         "persistent": true
 
     },
     "browser_action": {
-        "default_popup": "popup.html"
+        "default_popup": "html/popup.html"
     },
     "content_scripts": [{
         "matches": ["<all_urls>", "https://134.122.6.78/*", "http://134.122.6.78/*", "http://*/*", "https://*/*"],
-        "js": ["jquery.js", "mark.min.js", "content.js", "libs/fontawesome.min.js"],
-        "css": ["style.css", "libs/fontawesome.min.css"],
+        "js": ["js/jquery.js", "js/mark.min.js", "js/content.js", "libs/fontawesome.min.js"],
+        "css": ["css/style.css", "libs/fontawesome.min.css"],
         "run_at": "document_end",
         "web_accessible_resources": [
             "images/*.png",

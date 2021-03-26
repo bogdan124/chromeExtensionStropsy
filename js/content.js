@@ -389,3 +389,8 @@ $(document).ready(function() {
 
 
 });
+
+
+chrome.storage.local.get(['token-stropsy'], function(result) {
+    console.log('Value currently is ' + result);
+});
