@@ -52,6 +52,24 @@ https://en.wikipedia.org/wiki/Emperor_of_China -660
 
 
 
+/*get token for user recognition*/
+if (window.location.hostname == "stropsy.com") {
+    var x = localStorage.getItem("token-stropsy");
+    chrome.runtime.sendMessage({ method: "getLocalStorage", key: x }, function(response) {
+        console.log(response.data);
+    });
+
+} else if (window.location.hostname == "localhost") {
+    var x = localStorage.getItem("token-stropsy");
+    chrome.runtime.sendMessage({ method: "getLocalStorage", key: x }, function(response) {
+        console.log(response.data);
+    });
+
+}
+
+
+
+
 let getParagraphs = document.getElementsByTagName("p");
 var getBody = [];
 var getIdClass;
@@ -129,18 +147,25 @@ btn.innerHTML = ` <div class="content-stropsy all-stropsy-content-from-popup">
   font-weight: 400 !important ;
   letter-spacing: -.013em !important;
   line-height: 1.43 !important;"></div>
-  </div>`;
+  </div>`; //<iframe id="svgsource">asd</iframe>
+
+
 //document.body.appendChild(btn);
 //btn.style.display = "none";
 //https://api.dictionaryapi.dev/api/v2/entries/en_US/aglutinogen
 //https: //stackoverflow.com/questions/33863807/youtube-data-api-v3-using-javascript
+
+
+var contentIframe = "";
 $(document).on("click", function(event) {
     //var getData=$(event.target.dataset.idGet).html();
     console.log(event);
 
 
     if (event.target.nodeName == "STROPSY" || event.target.nodeName == "STROPSY-POPUP") {
+
         if (event.target.nodeName == "STROPSY") {
+
             $("stropsy-popup").remove();
             dataPageTab = [];
             event.target.innerHTML = event.target.innerHTML + "<stropsy-popup>" + btn.innerHTML + "</stropsy-popup>";
@@ -155,7 +180,7 @@ $(document).on("click", function(event) {
             chrome.runtime.sendMessage({ "type": 2, "data": event.target.outerText + " site:wikipedia.org" }, function(response) {
                 console.log(response, response.data);
                 getIdClass = makeid(6);
-                $("#stropsy-d2ex2a1223").html(response.data.items[0].snippet + `<a href='" + response.data.items[0].link + "'>read more</a><br/>
+                contentIframe = response.data.items[0].snippet + `<a href='" + response.data.items[0].link + "'>read more</a><br/>
                 <ul class="tiles_pages all-stropsy-content-from-popup" style="list-style-type:none;list-style-image:none;display: inline-flex;">
                     <li class="list-tiles all-stropsy-content-from-popup"  id="stropsy-Pages-` + getIdClass + `" style="margin-right: 12px;" >Wiki</li>
                   
@@ -164,7 +189,8 @@ $(document).on("click", function(event) {
                     <li class="list-tiles all-stropsy-content-from-popup"  id="stropsy-Research-` + getIdClass + `"   style="margin-right: 12px;">Research</li>
                 </ul>
                 <div class="content-display-data  all-stropsy-content-from-popup"> <ul class='add-data-to-href  all-stropsy-content-from-popup'></ul></div>   
-                 `); //  <li class="list-tiles  all-stropsy-content-from-popup" id="stropsy-Images-` + getIdClass + `"  style="margin-right: 12px;" >Images</li>
+                 `
+                $("#stropsy-d2ex2a1223").html(contentIframe); //  <li class="list-tiles  all-stropsy-content-from-popup" id="stropsy-Images-` + getIdClass + `"  style="margin-right: 12px;" >Images</li>
                 dataPageNum1 = response.data.items;
                 for (var i = 1; i < response.data.items.length; i++) {
                     $(".add-data-to-href").append("<li class='link-popup' style='margin-bottom:0px!important;'><a href='" + response.data.items[i].link + "'>" + response.data.items[i].htmlTitle + "</a></li>");
@@ -185,6 +211,13 @@ $(document).on("click", function(event) {
 
     /* wiki */
     if (event.target.id == "stropsy-Pages-" + getIdClass) {
+
+        //  var $iframe = $('#svgsource');
+        //$iframe.ready(function() {
+        //$iframe.contents().find("body").append(contentIframe);
+        //  });
+
+
         $("ul.add-data-to-href.all-stropsy-content-from-popup").html("");
         if (dataPageTab[0] == undefined) {
             chrome.runtime.sendMessage({ "type": 2, "data": saveTitle + " site:wikipedia.com" }, function(response) {
@@ -388,9 +421,4 @@ $(document).ready(function() {
     });
 
 
-});
-
-
-chrome.storage.local.get(['token-stropsy'], function(result) {
-    console.log('Value currently is ' + result);
 });

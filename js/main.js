@@ -2,6 +2,14 @@ var sendBack = null;
 var sendBacKSecReq = null;
 
 
+function verifyIfPersonIsLoggedIn() {
+
+    var stropsy_key = localStorage.getItem("stropsy-key");
+
+    return stropsy_key;
+}
+
+
 function textToEvaluate(textEval, bodyText) {
     //console.log(textEval,bodyText);
     $.ajax({
@@ -12,7 +20,8 @@ function textToEvaluate(textEval, bodyText) {
         contentType: "application/json",
         data: JSON.stringify({
             "text": textEval,
-            "bodyText": bodyText
+            "bodyText": bodyText,
+            "token": verifyIfPersonIsLoggedIn()
         }),
         success: function(result) {
             console.log(result);
@@ -35,7 +44,8 @@ function getWordExplanation(wordToExplain) {
         contentType: "application/json",
         data: JSON.stringify({
             "word": wordToExplain,
-            "type": 2
+            "type": 2,
+            "token": verifyIfPersonIsLoggedIn()
         }),
         success: function(result) {
             console.log(result);
@@ -57,7 +67,8 @@ function extractKeySmallText(textToExtract) {
         async: false,
         contentType: "application/json",
         data: JSON.stringify({
-            "text": textToExtract
+            "text": textToExtract,
+            "token": verifyIfPersonIsLoggedIn()
         }),
         success: function(result) {
             console.log(result);
@@ -113,8 +124,11 @@ $("#wordDetectCheckbox").on('change', function() {
 });
 /*button go to a login page*/
 $(document).ready(function() {
-    $('.GoToStropsy').on('click', 'a', function() {
+    $('#my_stropsy').click(function() {
         chrome.tabs.create({ url: "https://stropsy.com/login" });
+        chrome.storage.local.get(['token-stropsy'], function(result) {
+            console.log('Value currently is ' + result.key);
+        });
         return false;
     });
 });
